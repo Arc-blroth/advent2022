@@ -4,7 +4,7 @@ use arcblroth_aoc2022::input;
 
 fn main() {
     let mut curr_calories = 0;
-    let mut most_calories = 0;
+    let mut top_calories = [0u32; 3];
     for line in input!() {
         match line.parse::<u32>() {
             Ok(calories) => {
@@ -12,15 +12,21 @@ fn main() {
             }
             Err(_) => {
                 // assume blank line
-                if curr_calories > most_calories {
-                    most_calories = curr_calories;
+                for i in 0..top_calories.len() {
+                    if curr_calories > top_calories[i] {
+                        for j in i..(top_calories.len() - 1) {
+                            top_calories[j + 1] = top_calories[j];
+                        }
+                        top_calories[i] = curr_calories;
+                        break;
+                    }
                 }
                 curr_calories = 0;
             }
         }
     }
-    if curr_calories > most_calories {
-        most_calories = curr_calories;
-    }
-    println!("{most_calories}");
+    // (input ends with a blank line, so top_calories should always be accurate here)
+    let most_calories = top_calories[0];
+    let sum_top_calories: u32 = top_calories.iter().sum();
+    println!("{most_calories} {sum_top_calories}");
 }
